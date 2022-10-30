@@ -87,7 +87,24 @@ services:
       - elk
     depends_on:
       - elasticsearch
-
+  mysql_l13:
+    image:   mysql:latest
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password 	--slow-query-log=1 --slow-query-log-file=/var/log/mysql/slow-query.log
+    volumes:
+    - ./mysql/log/:/var/log/mysql
+    cap_add:
+    - SYS_NICE  # CAP_SYS_NICE
+    environment:
+    - "MYSQL_DATABASE=mysql_l13"
+    - "MYSQL_USER=mysql_l13"
+    - "MYSQL_PASSWORD=secret"
+    - "MYSQL_ROOT_PASSWORD=root"
+    - "MYSQL_ROOT_HOST:'%'"
+    ports:
+    - '3241:3306'
+    networks:
+    - elk
 networks:
   elk:
     driver: bridge
